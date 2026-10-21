@@ -1,0 +1,14 @@
+read_only = false
+
+[output]
+format = "text"
+
+[write]
+verify_timeout_ms = 8000
+verify_poll_ms = 250
+create_missing_tags = false
+
+[mcp]
+read_only = false
+default_page_size = 20
+max_page_size = 100
