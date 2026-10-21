@@ -54,3 +54,20 @@ lto = "thin"
 codegen-units = 1
 strip = "symbols"
 
+# The profile that dist builds release binaries with.
+[profile.dist]
+inherits = "release"
+lto = "thin"
+codegen-units = 1
+strip = "symbols"
+
+[workspace.metadata.dist]
+cargo-dist-version = "0.32.0"
+ci = "github"
+installers = ["shell", "homebrew"]
+targets = ["aarch64-apple-darwin", "x86_64-apple-darwin"]
+tap = "guangzan/homebrew-tap"
+publish-jobs = ["homebrew"]
+pr-run-mode = "plan"
+plan-jobs = ["./release-preflight"]
+

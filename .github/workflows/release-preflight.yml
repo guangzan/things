@@ -1,0 +1,58 @@
+name: Release Preflight
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-release:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify tag matches Cargo version
+        if: github.ref_type == 'tag'
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          version="$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -n 1)"
+          tag_version="${RELEASE_TAG#v}"
+          if [[ "$tag_version" != "$version" ]]; then
+            echo "::error::Release tag $RELEASE_TAG does not match workspace version $version"
+            exit 1
+          fi
+
+      - name: Verify tag is on main
+        if: github.ref_type == 'tag'
+        run: |
+          git fetch origin main
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "::error::Release tag $GITHUB_REF_NAME does not point at a commit on main"
+            exit 1
+          fi
+
+      - name: Install Rust toolchain
+        if: github.ref_type == 'tag'
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.89.0
+          components: clippy,rustfmt
+
+      - uses: Swatinem/rust-cache@v2
+        if: github.ref_type == 'tag'
+
+      - name: Format
+        if: github.ref_type == 'tag'
+        run: cargo fmt --all -- --check
+
+      - name: Clippy
+        if: github.ref_type == 'tag'
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      - name: Test
+        if: github.ref_type == 'tag'
+        run: cargo test --workspace --no-fail-fast

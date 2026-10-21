@@ -51,7 +51,27 @@ around a strict safety boundary:
 
 ## Install
 
-Requires **macOS**, **Rust 1.89+**, and **Things 3**.
+Requires **macOS** and **Things 3**.
+
+### Homebrew
+
+```sh
+brew install guangzan/tap/things
+```
+
+This installs the prebuilt universal package for Apple Silicon and Intel Macs.
+Upgrade it with `brew upgrade things`.
+
+### Shell installer
+
+```sh
+curl --proto '=https' --tlsv1.2 -LsSf \
+  https://github.com/guangzan/things/releases/latest/download/things-installer.sh | sh
+```
+
+### From source
+
+Source builds require **Rust 1.89+**:
 
 ```sh
 cargo install --path crates/things-cli
@@ -62,12 +82,6 @@ Or build a release binary:
 ```sh
 cargo build --release -p things
 ./target/release/things --help
-```
-
-Homebrew (after a tagged release has published its checksum):
-
-```sh
-brew install --formula ./Formula/things.rb
 ```
 
 ## macOS permissions

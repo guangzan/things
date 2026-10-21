@@ -42,7 +42,27 @@ English: [README.md](README.md)
 
 ## 安装
 
-需要 **macOS**、**Rust 1.89+** 和 **Things 3**。
+需要 **macOS** 和 **Things 3**。
+
+### Homebrew
+
+```sh
+brew install guangzan/tap/things
+```
+
+安装的是面向 Apple Silicon 与 Intel Mac 的预编译版本。后续使用
+`brew upgrade things` 升级。
+
+### Shell 安装脚本
+
+```sh
+curl --proto '=https' --tlsv1.2 -LsSf \
+  https://github.com/guangzan/things/releases/latest/download/things-installer.sh | sh
+```
+
+### 从源码构建
+
+源码构建需要 **Rust 1.89+**：
 
 ```sh
 cargo install --path crates/things-cli
@@ -53,12 +73,6 @@ cargo install --path crates/things-cli
 ```sh
 cargo build --release -p things
 ./target/release/things --help
-```
-
-Homebrew（在带校验和的 tagged release 发布之后）：
-
-```sh
-brew install --formula ./Formula/things.rb
 ```
 
 ## macOS 权限
