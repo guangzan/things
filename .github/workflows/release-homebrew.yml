@@ -1,0 +1,64 @@
+name: Publish Homebrew formula
+
+on:
+  workflow_call:
+    inputs:
+      plan:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: macos-15
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Checkout tap
+        uses: actions/checkout@v4
+        with:
+          repository: "guangzan/homebrew-tap"
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          path: tap
+          persist-credentials: true
+
+      - name: Fetch generated formula
+        uses: actions/download-artifact@v8
+        with:
+          pattern: artifacts-*
+          path: Formula/
+          merge-multiple: true
+
+      - name: Read release version
+        id: release
+        env:
+          PLAN: ${{ inputs.plan }}
+        run: |
+          version="$(ruby -rjson -e 'puts JSON.parse(ENV.fetch("PLAN")).fetch("releases").first.fetch("app_version")')"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Finalize formula
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: ruby scripts/finalize-homebrew-formula.rb Formula/things.rb "$VERSION"
+
+      - name: Validate formula
+        run: scripts/validate-homebrew-formula.sh Formula/things.rb
+
+      - name: Commit formula
+        working-directory: tap
+        run: |
+          set -euo pipefail
+          git config user.name "things release"
+          git config user.email "release@invalid"
+
+          cp ../Formula/things.rb Formula/things.rb
+          git add Formula/things.rb
+          git diff --cached --quiet && exit 0
+          git commit -m "things ${{ steps.release.outputs.version }}"
+          git push
