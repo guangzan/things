@@ -70,4 +70,5 @@ tap = "guangzan/homebrew-tap"
 publish-jobs = ["./release-homebrew"]
 pr-run-mode = "plan"
 plan-jobs = ["./release-preflight"]
+github-custom-job-permissions = { "release-homebrew" = { "contents" = "read", "id-token" = "write", "packages" = "write" } }
 
