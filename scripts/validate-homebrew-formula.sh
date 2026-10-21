@@ -22,6 +22,12 @@ HOMEBREW_NO_AUTO_UPDATE=1 brew tap \
 if HOMEBREW_NO_AUTO_UPDATE=1 brew help trust >/dev/null 2>&1; then
   HOMEBREW_NO_AUTO_UPDATE=1 brew trust "$tap_name" >/dev/null
 fi
+
+# cargo-dist's Ruby output is valid but not fully Homebrew-style. Format it in
+# tap context, then copy the exact validated contents back for publishing.
+HOMEBREW_NO_AUTO_UPDATE=1 brew style --fix "$tap_name/things"
+cp "$tap_dir/Formula/things.rb" "$formula"
+HOMEBREW_NO_AUTO_UPDATE=1 brew style "$tap_name/things"
 HOMEBREW_NO_AUTO_UPDATE=1 brew audit --strict --online "$tap_name/things"
 
 if HOMEBREW_NO_AUTO_UPDATE=1 brew list --formula things >/dev/null 2>&1; then

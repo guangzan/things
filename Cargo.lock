@@ -1190,7 +1190,7 @@ checksum = "8f50febec83f5ee1df3015341d8bd429f2d1cc62bcba7ea2076759d315084683"
 
 [[package]]
 name = "things"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "anyhow",
  "assert_cmd",
@@ -1210,7 +1210,7 @@ dependencies = [
 
 [[package]]
 name = "things-core"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "chrono",
  "directories",
@@ -1228,7 +1228,7 @@ dependencies = [
 
 [[package]]
 name = "things-mcp"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "chrono",
  "rmcp",
